@@ -18,5 +18,12 @@ class UserstableSeeder extends Seeder
             'admin'=> 1,
             'avatar'=> 'avatars/avatar.png'
         ]);
+
+        App\User::create([
+            'name'=>'mosaab',
+            'password'=>bcrypt('admin'),
+            'email'=>'mosaab@mosaab.com',
+            'avatar'=>'avatars/avatar.png'
+        ]);
     }
 }
