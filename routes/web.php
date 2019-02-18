@@ -71,4 +71,40 @@ Route::group(['middleware'=>'auth'], function () {
         'uses'=>'RepliesController@unlike',
         'as'=>'reply.unlike'
     ]);
+
+    Route::get('/discussion/watch/{id}',[
+        'uses'=>'WatchersController@watch',
+        'as'=>'discussion.watch'
+    ]);
+
+    Route::get('/discussion/unwatch/{id}',[
+        'uses'=>'WatchersController@unwatch',
+        'as'=>'discussion.unwatch'
+    ]);
+
+    Route::get('/discussion/best/reply/{id}',[
+        'uses'=>'RepliesController@best_answer',
+        'as'=>'discussion.best.answer'
+    ]);
+
+    Route::get('/discussions/edit/{slug}',[
+        'uses'=>'DiscussionsController@edit',
+        'as'=>'discussions.edit'
+    ]);
+
+    Route::post('/discussions/update/{id}',[
+        'uses'=>'DiscussionsController@update',
+        'as'=>'discussions.update'
+    ]);
+
+    Route::get('/reply/edit/{id}',[
+        'uses'=>'RepliesController@edit',
+        'as'=>'reply.edit'
+    ]);
+
+    Route::post('/reply/update/{id}',[
+        'uses'=>'RepliesController@update',
+        'as'=>'reply.update'
+    ]);
+    
 });

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class Discussion extends Model
@@ -11,7 +12,7 @@ class Discussion extends Model
         'content',
         'user_id',
         'channel_id',
-        'slug'
+        'slug',
     ];
 
     public function channel()
@@ -27,5 +28,42 @@ class Discussion extends Model
     public function replies()
     {
         return $this->hasMany('App\Reply');
+    }
+
+    public function watchers()
+    {
+        return $this->hasMany('App\Watcher');
+    }
+
+    public function is_being_watched_by_auth_user()
+    {
+        $id = Auth::id();
+        $watchers_id = array();
+
+        foreach($this->watchers as $w):
+            array_push($watchers_id, $w->user_id);
+        endforeach;
+
+        if(in_array($id,$watchers_id))
+        {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function hasBestAnswer()
+    {
+
+        foreach($this->replies as $reply):
+            if($reply->best_answer)
+            {
+                return true;                
+            }else {
+                return false;
+            }
+        endforeach;
+
     }
 }

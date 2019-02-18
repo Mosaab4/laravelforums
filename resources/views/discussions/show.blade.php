@@ -7,7 +7,28 @@
         <div class="panel-heading">
             <img src="{{ asset($d->user->avatar) }}" alt="{{ $d->user->name }}" width="40px" height="40px">&nbsp;&nbsp;&nbsp;
 
-            <span>{{ $d->user->name }}, <b>{{ $d->created_at->diffForHumans() }}</b></span>
+            <span>{{ $d->user->name }} <b>({{ $d->user->points }})</b></span>
+
+           
+            @if ($d->is_being_watched_by_auth_user())
+                <a href="{{ route('discussion.unwatch',['id'=>$d->id ]) }}" style="margin-left:9px;" class="btn btn-default btn-xs pull-right">unwatch</a>
+            @else
+                <a href="{{ route('discussion.watch',['id'=>$d->id ]) }}" style="margin-left:9px;" class="btn btn-default btn-xs pull-right">Watch</a>
+            @endif
+
+            @if(Auth::id() == $d->user->id)
+                @if(!$d->hasBestAnswer())
+                    <a href="{{ route('discussions.edit',['slug'=>$d->slug ]) }}" style="margin-left:9px;" class="btn btn-info btn-xs pull-right">Edit</a>                
+                @endif
+            @endif
+
+
+            @if($d->hasBestAnswer())
+                <span class="btn btn-success pull-right btn-xs">closed</span>                
+            @else
+                <span class="btn btn-danger pull-right btn-xs">open</span>
+            @endif
+
 
         </div>
 
@@ -19,8 +40,26 @@
             <hr>
 
             <p class="text-center">
-                {{ $d->content }}
+                {!! Markdown::convertToHtml($d->content) !!}
             </p>
+
+            <hr>
+
+            @if($best_answer)
+               <div class="text-center" style="padding:40px;">
+                    <h3 class="text-center">BEST ANSWER</h3>
+                   <div class="panel panel-success">
+                       <div class="panel-heading">
+                            <img src="{{ asset($best_answer->user->avatar) }}" alt="{{ $best_answer->user->name }}" width="40px" height="40px">&nbsp;&nbsp;&nbsp;
+                            <span>{{ $best_answer->user->name }} <b>({{ $best_answer->user->points }})</span>            
+                       </div>
+
+                       <div class="panel-body">
+                           {!! Markdown::convertToHtml($best_answer->content) !!}
+                       </div>
+                   </div>
+               </div> 
+            @endif
         </div>
         
         <div class="panel-footer">
@@ -35,13 +74,25 @@
             <div class="panel-heading">
                 <img src="{{ asset($r->user->avatar) }}" alt="{{ $r->user->name }}" width="40px" height="40px">&nbsp;&nbsp;&nbsp;
     
-                <span>{{ $r->user->name }}, <b>{{ $r->created_at->diffForHumans() }}</b></span>
+                <span>{{ $r->user->name }} <b>({{ $r->user->points }})</span>
+
+                @if(!$best_answer)
+                    @if(Auth::id() == $d->user->id)
+                        <a href="{{ route('discussion.best.answer',['id'=>$r->id ] ) }} " class="btn btn-xs btn-primary pull-right" style="margin-left:8px;">Mark as best answer</a>                        
+                    @endif
+                @endif
+                
+                @if(Auth::id() == $r->user->id)
+                    @if(!$r->best_answer) 
+                        <a href="{{ route('reply.edit',['id'=>$r->id ] ) }} " class="btn btn-xs btn-info pull-right">Edit</a>
+                    @endif
+                @endif
     
             </div>
     
             <div class="panel-body">
                 <p class="text-center">
-                    {{ $r->content }}
+                    {!! Markdown::convertToHtml($r->content) !!}
                 </p>
             </div>
     
